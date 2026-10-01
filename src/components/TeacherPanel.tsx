@@ -5,15 +5,9 @@ import {
   Flame, 
   Copy, 
   Check, 
-  Users, 
-  QrCode, 
-  Send, 
   ArrowRightLeft, 
-  ShieldCheck, 
-  Activity, 
-  AlertCircle,
+  Send, 
   X,
-  ExternalLink
 } from 'lucide-react';
 import { SessionState, StudentUser } from '../types';
 
@@ -44,31 +38,20 @@ export const TeacherPanel: React.FC<TeacherPanelProps> = ({
   isMobileDrawer = false,
   onCloseMobile,
 }) => {
-  const [copiedCode, setCopiedCode] = useState(false);
-  const [showQR, setShowQR] = useState(false);
-  const [broadcastText, setBroadcastText] = useState('');
-  const [broadcastSentToast, setBroadcastSentToast] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [questionInput, setQuestionInput] = useState('');
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(sessionState.roomCode);
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`https://readsync.app/room/${sessionState.roomCode}`);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
   };
 
-  const handleSendBroadcast = (e: React.FormEvent) => {
+  const handleSendQuestion = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!broadcastText.trim()) return;
-    onBroadcastMessage(broadcastText.trim());
-    setBroadcastText('');
-    setBroadcastSentToast(true);
-    setTimeout(() => setBroadcastSentToast(false), 2500);
-  };
-
-  // Format elapsed time (seconds to MM:SS)
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    if (!questionInput.trim()) return;
+    onBroadcastMessage(questionInput.trim());
+    setQuestionInput('');
   };
 
   return (
@@ -77,321 +60,205 @@ export const TeacherPanel: React.FC<TeacherPanelProps> = ({
       className={`${
         isMobileDrawer
           ? 'w-full h-full'
-          : 'h-[calc(100vh-4rem)] w-80 lg:w-96 border-l border-slate-800'
-      } bg-slate-900/95 backdrop-blur-md flex flex-col flex-shrink-0 overflow-y-auto text-slate-100`}
+          : 'h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] w-80 lg:w-[350px] border-l border-[#26201B]'
+      } bg-[#161311] flex flex-col flex-shrink-0 text-[#E8DFD5] relative justify-between select-none`}
     >
-      {/* Panel Header */}
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-200">
-            Teacher Control Center
-          </h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] px-2 py-0.5 rounded-md bg-indigo-950/80 text-indigo-400 border border-indigo-500/30 font-semibold">
-            Host View
-          </span>
-          {isMobileDrawer && onCloseMobile && (
+      {/* Scrollable upper content */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Mobile close button if opened as drawer */}
+        {isMobileDrawer && onCloseMobile && (
+          <div className="flex justify-between items-center pb-2 border-b border-[#26201B]">
+            <span className="text-xs font-bold text-[#D47E53] uppercase tracking-wider">Teacher Controls</span>
             <button
               onClick={onCloseMobile}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition min-w-[32px] min-h-[32px] flex items-center justify-center"
-              aria-label="Close panel"
+              className="p-1.5 rounded-lg text-[#9E9287] hover:text-white hover:bg-[#231E1B]"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
 
-      <div className={`p-4 space-y-5 flex-1 ${isMobileDrawer ? 'pb-28' : ''}`}>
-        {/* Section 1: Session Controls */}
-        <div 
-          id="teacher-session-controls"
-          className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-indigo-400" />
-              Session Status
-            </span>
-            <span className="font-mono text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-md">
-              {formatTime(sessionState.durationSeconds)}
-            </span>
+        {/* 1. User Profile Header & Invite URL Box */}
+        <div className="space-y-3 pt-1">
+          <div className="flex items-center gap-3">
+            {/* Purple circle avatar */}
+            <div className="w-10 h-10 rounded-full bg-[#6366F1] flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0">
+              A
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold text-[#F7F2EC] leading-tight truncate">
+                Alex Rivera
+              </h3>
+              <p className="text-xs text-[#8E8377] leading-tight mt-0.5">
+                connected to room
+              </p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mb-3">
+          {/* Invite URL row */}
+          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#1C1815] border border-[#2D2620] text-xs text-[#9E9287]">
+            <span className="truncate pr-2 font-mono text-[11px] text-[#A6998C]">
+              Invite URL: readsync.app/r/{sessionState.roomCode}
+            </span>
             <button
-              id="session-pause-resume-btn"
+              onClick={handleCopyLink}
+              className="p-1 text-[#9E9287] hover:text-[#EDE5DC] transition flex-shrink-0 rounded"
+              title="Copy invite URL"
+            >
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* 2. Section: Teacher Control Center */}
+        <div className="pt-2">
+          {/* Section header dot */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#D47E53]">
+              TEACHER CONTROL CENTER
+            </h4>
+          </div>
+
+          {/* Primary Action Button: Active Session */}
+          <button
+            id="teacher-active-session-btn"
+            onClick={onTogglePlayPause}
+            className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2 shadow-md ${
+              sessionState.isPaused
+                ? 'bg-[#29221C] text-[#E5D7C7] border border-[#3E332A] hover:bg-[#342B24]'
+                : 'bg-[#A24E26] hover:bg-[#8F3E1B] text-white shadow-[#A24E26]/20'
+            }`}
+          >
+            <span className={`w-2 h-2 rounded-full ${sessionState.isPaused ? 'bg-amber-400' : 'bg-white'}`} />
+            <span>{sessionState.isPaused ? 'Resume Session' : 'Active Session'}</span>
+          </button>
+
+          {/* Two-button secondary controls */}
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            <button
+              id="teacher-pause-session-btn"
               onClick={onTogglePlayPause}
-              className={`flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold transition shadow-sm ${
-                sessionState.isPaused
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
-                  : 'bg-amber-600/80 hover:bg-amber-500 text-white shadow-amber-600/20'
-              }`}
+              className="py-2 px-3 rounded-xl bg-[#231E1B] hover:bg-[#2C2622] border border-[#342C25] text-[#D8CDC1] text-xs font-medium flex items-center justify-center gap-1.5 transition"
             >
               {sessionState.isPaused ? (
                 <>
                   <Play className="w-3.5 h-3.5 fill-current" />
-                  Resume
+                  <span>Resume</span>
                 </>
               ) : (
                 <>
                   <Pause className="w-3.5 h-3.5 fill-current" />
-                  Pause Session
+                  <span>Pause Session</span>
                 </>
               )}
             </button>
 
             <button
-              id="force-sync-all-btn"
+              id="teacher-force-sync-btn"
               onClick={onForceSyncToCurrentPage}
-              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-700 hover:bg-indigo-600 text-slate-200 hover:text-white text-xs font-medium border border-slate-600 transition shadow-sm"
-              title={`Broadcast Page ${currentPageNumber} to all students`}
+              className="py-2 px-3 rounded-xl bg-[#231E1B] hover:bg-[#2C2622] border border-[#342C25] text-[#D8CDC1] text-xs font-medium flex items-center justify-center gap-1.5 transition"
+              title={`Sync all students to Page ${currentPageNumber}`}
             >
               <ArrowRightLeft className="w-3.5 h-3.5" />
-              Force Page Sync
+              <span>Force Page Sync</span>
             </button>
           </div>
 
-          {/* Force Sync lock switch */}
-          <div className="flex items-center justify-between pt-2 border-t border-slate-700/40 text-xs">
-            <span className="text-slate-400">Lock Students to My Page</span>
-            <button
-              id="lock-students-toggle"
-              onClick={onToggleForceSync}
-              className={`w-9 h-5 rounded-full p-0.5 transition-colors ${
-                sessionState.forcePageSync ? 'bg-indigo-600' : 'bg-slate-700'
-              }`}
-            >
-              <div 
-                className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                  sessionState.forcePageSync ? 'translate-x-4' : 'translate-x-0'
-                }`} 
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* Section 2: "Confusion Heatmap" Toggle Panel */}
-        <div 
-          id="teacher-heatmap-panel"
-          className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-2">
+          {/* Heatmap Active Row */}
+          <div className="flex items-center justify-between mt-3 px-3 py-2.5 rounded-xl bg-[#1C1815] border border-[#2D2620]">
             <div className="flex items-center gap-2">
-              <div className={`p-1.5 rounded-lg ${sessionState.heatmapEnabled ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-700 text-slate-400'}`}>
-                <Flame className="w-4 h-4" />
+              <div className="w-6 h-6 rounded-lg bg-[#301E17] text-[#E0653B] flex items-center justify-center">
+                <Flame className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <h3 className="text-xs font-bold text-slate-200">Confusion Heatmap</h3>
-                <p className="text-[10px] text-slate-400">Real-time friction overlay</p>
-              </div>
+              <span className="text-xs font-medium text-[#EDE5DC]">
+                Heatmap Active
+              </span>
             </div>
 
+            {/* Toggle switch */}
             <button
-              id="heatmap-toggle-switch"
+              id="teacher-heatmap-toggle"
               onClick={onToggleHeatmap}
-              className={`w-11 h-6 rounded-full p-0.5 transition-colors ${
-                sessionState.heatmapEnabled ? 'bg-rose-600' : 'bg-slate-700'
+              className={`w-10 h-5 rounded-full p-0.5 transition-colors ${
+                sessionState.heatmapEnabled ? 'bg-[#A24E26]' : 'bg-[#38312B]'
               }`}
-              title="Toggle Confusion Heatmap visual overlay"
+              title="Toggle friction heatmap overlay"
             >
               <div 
-                className={`w-5 h-5 rounded-full bg-white transition-transform shadow-md ${
+                className={`w-4 h-4 rounded-full bg-white transition-transform shadow ${
                   sessionState.heatmapEnabled ? 'translate-x-5' : 'translate-x-0'
-                }`} 
+                }`}
               />
             </button>
           </div>
-
-          <div className="mt-3 bg-slate-900/60 rounded-xl p-3 border border-slate-800 text-xs flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-black text-rose-400 leading-none">*</span>
-              <span className="text-slate-300">Active on Page {currentPageNumber}:</span>
-            </div>
-            <span className="font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/30">
-              {currentPageConfusionCount} pins
-            </span>
-          </div>
         </div>
 
-        {/* Section 3: 6-Digit Room Code Invite Panel */}
-        <div 
-          id="teacher-room-invite-panel"
-          className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-sm"
-        >
+        {/* 3. Section: Connected Students */}
+        <div className="pt-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-300">Room Code Invite</span>
-            <span className="text-[10px] text-slate-400">6-Digit Key</span>
-          </div>
-
-          {/* Monospace Code Display */}
-          <div className="bg-slate-950/80 border border-slate-700/80 rounded-xl p-3 flex items-center justify-between mb-3">
-            <span className="font-mono text-xl font-extrabold text-indigo-400 tracking-widest">
-              {sessionState.roomCode}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                id="copy-code-panel-btn"
-                onClick={handleCopyCode}
-                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-                title="Copy room code"
-              >
-                {copiedCode ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-              </button>
-              <button
-                id="view-qr-code-btn"
-                onClick={() => setShowQR(true)}
-                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-                title="Show QR Code"
-              >
-                <QrCode className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Quick Invite Link notice */}
-          <div className="text-[11px] text-slate-400 flex items-center justify-between">
-            <span>Invite URL ready to share</span>
-            <button 
-              onClick={handleCopyCode}
-              className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium"
-            >
-              {copiedCode ? 'Code Copied!' : 'Copy Invite Link'}
-            </button>
-          </div>
-        </div>
-
-        {/* Section 4: Live Student Roster & Presence */}
-        <div 
-          id="teacher-student-roster"
-          className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="text-xs font-medium text-[#C8BEB3]">
               Connected Students ({students.length})
             </span>
-            <span className="text-[10px] text-emerald-400 font-medium">All Online</span>
+            <span className="text-xs font-semibold text-emerald-400">
+              All Online
+            </span>
           </div>
 
-          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-            {students.map((student) => (
-              <div 
-                key={student.id}
-                className="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800/80 text-xs"
+          {/* Student items list */}
+          <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+            {students.map((student, idx) => (
+              <div
+                key={`${student.id}-${idx}`}
+                className="flex items-center justify-between py-1.5 px-2.5 rounded-lg hover:bg-[#1E1916] transition text-xs"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <div 
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm"
-                    style={{ backgroundColor: student.avatarColor }}
+                    className="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
                   >
                     {student.name.charAt(0)}
                   </div>
-                  <span className="font-medium text-slate-200">{student.name}</span>
+                  <span className="font-medium text-[#EDE4DA]">
+                    {student.name}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
-                    P.{student.currentPage}
-                  </span>
-                  {student.status === 'confused' && (
-                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" title="Flagged confusion on text" />
-                  )}
+                {/* Page badge with status dot */}
+                <div className="flex items-center gap-1.5 text-[10px] font-mono text-[#A89C8F] bg-[#1E1916] border border-[#2D2620] px-2 py-0.5 rounded-md">
+                  <span>P.{student.currentPage}</span>
+                  <span 
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      idx === 0 ? 'bg-[#D45B45]' : idx % 2 === 0 ? 'bg-amber-400' : 'bg-[#CCA572]'
+                    }`}
+                  />
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Section 5: Teacher Broadcast Announcement */}
-        <div 
-          id="teacher-broadcast-panel"
-          className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-sm"
-        >
-          <span className="text-xs font-semibold text-slate-300 block mb-1.5">
-            Broadcast Notice to Class
-          </span>
-          <form onSubmit={handleSendBroadcast} className="flex gap-2">
-            <input
-              id="broadcast-message-input"
-              type="text"
-              value={broadcastText}
-              onChange={(e) => setBroadcastText(e.target.value)}
-              placeholder="e.g. Focus on Section 1.3 before we begin..."
-              className="flex-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-            />
-            <button
-              type="submit"
-              id="send-broadcast-btn"
-              disabled={!broadcastText.trim()}
-              className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white text-xs font-medium transition flex items-center gap-1 shadow-md shadow-indigo-600/20"
-            >
-              <Send className="w-3 h-3" />
-            </button>
-          </form>
-          {broadcastSentToast && (
-            <p className="text-[10px] text-emerald-400 mt-1.5 flex items-center gap-1 animate-fade-in">
-              <Check className="w-3 h-3" />
-              Broadcast updated for all students
-            </p>
-          )}
-        </div>
       </div>
 
-      {/* QR Code Modal preview */}
-      {showQR && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-xs w-full text-center relative shadow-2xl">
-            <button
-              onClick={() => setShowQR(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <h4 className="text-sm font-bold text-white mb-1">Scan to Join Seminar</h4>
-            <p className="text-xs text-slate-400 mb-4">Room Code: {sessionState.roomCode}</p>
-
-            {/* Generated Mock QR visual */}
-            <div className="bg-white p-4 rounded-xl inline-block shadow-inner mx-auto mb-4">
-              <svg className="w-40 h-40" viewBox="0 0 100 100" fill="none">
-                <rect width="100" height="100" fill="white" />
-                {/* QR corner 1 */}
-                <rect x="10" y="10" width="24" height="24" fill="#0F172A" />
-                <rect x="14" y="14" width="16" height="16" fill="white" />
-                <rect x="18" y="18" width="8" height="8" fill="#0F172A" />
-                {/* QR corner 2 */}
-                <rect x="66" y="10" width="24" height="24" fill="#0F172A" />
-                <rect x="70" y="14" width="16" height="16" fill="white" />
-                <rect x="74" y="18" width="8" height="8" fill="#0F172A" />
-                {/* QR corner 3 */}
-                <rect x="10" y="66" width="24" height="24" fill="#0F172A" />
-                <rect x="14" y="70" width="16" height="16" fill="white" />
-                <rect x="18" y="74" width="8" height="8" fill="#0F172A" />
-                {/* Center matrix elements */}
-                <rect x="42" y="14" width="8" height="8" fill="#0F172A" />
-                <rect x="42" y="26" width="8" height="8" fill="#0F172A" />
-                <rect x="54" y="20" width="6" height="6" fill="#0F172A" />
-                <rect x="40" y="40" width="20" height="20" rx="3" fill="#6366F1" />
-                <rect x="46" y="46" width="8" height="8" fill="white" />
-                <rect x="66" y="45" width="8" height="8" fill="#0F172A" />
-                <rect x="78" y="45" width="8" height="15" fill="#0F172A" />
-                <rect x="42" y="66" width="8" height="8" fill="#0F172A" />
-                <rect x="54" y="74" width="12" height="6" fill="#0F172A" />
-                <rect x="70" y="70" width="16" height="16" fill="#0F172A" />
-              </svg>
-            </div>
-
-            <button
-              onClick={() => setShowQR(false)}
-              className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition"
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
+      {/* 4. Bottom Input Bar: Ask a question on Page X */}
+      <div className="p-3 border-t border-[#26201B] bg-[#161311] flex-shrink-0">
+        <form onSubmit={handleSendQuestion} className="relative flex items-center">
+          <input
+            id="teacher-bottom-question-input"
+            type="text"
+            value={questionInput}
+            onChange={(e) => setQuestionInput(e.target.value)}
+            placeholder={`Ask a question on Page ${currentPageNumber}...`}
+            className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-[#1C1815] border border-[#2E2620] text-xs text-[#EDE5DC] placeholder-[#7D7164] focus:outline-none focus:border-[#CCA572]"
+          />
+          <button
+            type="submit"
+            disabled={!questionInput.trim()}
+            className="absolute right-2.5 p-1 text-[#A69B8E] hover:text-[#CCA572] disabled:opacity-30 transition"
+            title="Post question"
+          >
+            <Send className="w-3.5 h-3.5" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

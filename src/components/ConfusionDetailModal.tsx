@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, AlertCircle, MessageSquare, CheckCircle, Sparkles, Send } from 'lucide-react';
+import { X, CheckCircle, Send } from 'lucide-react';
 import { DocumentParagraph, UserRole } from '../types';
 
 interface ConfusionDetailModalProps {
@@ -31,15 +31,15 @@ export const ConfusionDetailModal: React.FC<ConfusionDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
       <div 
         id="confusion-detail-modal"
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-slate-900 border border-rose-500/30 p-4 sm:p-6 shadow-2xl text-slate-100 relative"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[#191512] border border-[#3E2924] p-4 sm:p-6 shadow-2xl text-[#E8DFD5] relative"
       >
         <button
           id="close-confusion-modal-btn"
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-800"
+          className="absolute top-4 right-4 text-[#8C8073] hover:text-white transition-colors p-1.5 rounded-lg hover:bg-[#251F1A]"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
@@ -47,99 +47,91 @@ export const ConfusionDetailModal: React.FC<ConfusionDetailModalProps> = ({
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+          <div className="w-10 h-10 rounded-xl bg-[#331C18] border border-[#642B23] flex items-center justify-center text-[#E56A54]">
             <span className="text-xl font-black leading-none">*</span>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-semibold text-white">Confusion Pin Analysis</h3>
-              <span className="px-2 py-0.5 text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-full">
+              <h3 className="text-base font-semibold text-[#FAF6EE]">Confusion Pin Analysis</h3>
+              <span className="px-2 py-0.5 text-[10px] font-bold bg-[#381B18] text-[#F39C8C] border border-[#642B23] rounded-full">
                 {paragraph.confusionCount} Flagged
               </span>
             </div>
-            <p className="text-xs text-slate-400">Active friction on page {paragraph.pageNumber}</p>
+            <p className="text-xs text-[#8C8073]">Active friction on page {paragraph.pageNumber}</p>
           </div>
         </div>
 
         {/* Paragraph snippet */}
-        <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5 mb-4 text-xs text-slate-300 leading-relaxed font-serif italic border-l-4 border-l-rose-500">
+        <div className="bg-[#120F0D] border border-[#2B231D] rounded-xl p-3.5 mb-4 text-xs text-[#DDD3C7] leading-relaxed font-serif italic border-l-4 border-l-[#D45B45]">
           "{paragraph.text.length > 220 ? paragraph.text.slice(0, 220) + '...' : paragraph.text}"
         </div>
 
         {/* List of student notes */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <MessageSquare className="w-3.5 h-3.5 text-rose-400" />
-              Student Explanations ({paragraph.confusionNotes.length})
+            <span className="text-xs font-semibold text-[#CCA572] uppercase tracking-wider">
+              Student Inquiries & Notes
             </span>
-            {userRole === 'teacher' && onResolveConfusion && (
-              <button
-                id="teacher-resolve-btn"
-                onClick={() => {
-                  onResolveConfusion(paragraph.id);
-                  onClose();
-                }}
-                className="text-[11px] font-medium text-emerald-400 hover:text-emerald-300 flex items-center gap-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-1 rounded-lg transition"
-              >
-                <CheckCircle className="w-3.5 h-3.5" />
-                Resolve All on This Block
-              </button>
-            )}
+            <span className="text-[11px] text-[#7D7164]">
+              {paragraph.confusionNotes?.length || 0} Comments
+            </span>
           </div>
 
-          <div className="max-h-48 overflow-y-auto space-y-2.5 pr-1">
-            {paragraph.confusionNotes.length === 0 ? (
-              <div className="text-center py-6 text-xs text-slate-400 bg-slate-800/40 rounded-xl border border-slate-800">
-                <AlertCircle className="w-5 h-5 mx-auto mb-1 text-slate-500" />
-                Students pinned confusion asterisks without attaching specific notes.
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+            {!paragraph.confusionNotes || paragraph.confusionNotes.length === 0 ? (
+              <div className="text-center py-4 bg-[#14110E] rounded-xl text-xs text-[#7D7164] border border-[#26201B]">
+                Students placed confusion markers without textual notes.
               </div>
             ) : (
-              paragraph.confusionNotes.map((note, index) => (
+              paragraph.confusionNotes.map((note, idx) => (
                 <div 
-                  key={index}
-                  className="bg-slate-800/70 border border-slate-700/60 rounded-xl p-3 text-xs"
+                  key={`${note.studentId}-${idx}`} 
+                  className="p-3 rounded-xl bg-[#14110E] border border-[#2B231D] text-xs space-y-1"
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-indigo-300">{note.studentName}</span>
-                    <span className="text-[10px] text-slate-400">{note.timestamp}</span>
+                  <div className="flex items-center justify-between text-[#8C8073]">
+                    <span className="font-semibold text-[#E8DFD5]">{note.studentName}</span>
+                    <span className="text-[10px]">{note.timestamp}</span>
                   </div>
-                  <p className="text-slate-200 leading-normal">{note.comment}</p>
+                  <p className="text-[#C8BEB3] leading-relaxed">{note.comment}</p>
                 </div>
               ))
             )}
           </div>
         </div>
 
-        {/* Add note input (for students or teacher) */}
-        {userRole === 'student' && onAddConfusionNote && (
-          <form onSubmit={handlePostNote} className="flex gap-2">
-            <input
-              id="student-confusion-note-input"
-              type="text"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Explain why this concept is unclear..."
-              className="flex-1 px-3.5 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-rose-500 transition"
-            />
-            <button
-              type="submit"
-              id="submit-confusion-note-btn"
-              disabled={!commentText.trim()}
-              className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-lg shadow-rose-600/20"
-            >
-              <Send className="w-3.5 h-3.5" />
-              Pin
-            </button>
-          </form>
-        )}
+        {/* Action input to add student note */}
+        <form onSubmit={handlePostNote} className="pt-3 border-t border-[#2B231D] flex gap-2">
+          <input
+            id="confusion-comment-input"
+            type="text"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder={`Add a clarifying note as ${currentStudentName}...`}
+            className="flex-1 px-3 py-2 rounded-xl bg-[#120F0D] border border-[#2B231D] text-xs text-[#FAF6EE] placeholder-[#7D7164] focus:outline-none focus:border-[#CCA572]"
+          />
+          <button
+            type="submit"
+            disabled={!commentText.trim()}
+            className="px-3.5 py-2 rounded-xl bg-[#CCA572] hover:bg-[#B89260] disabled:opacity-40 text-[#16120C] text-xs font-bold transition flex items-center gap-1 shadow-md"
+          >
+            <Send className="w-3.5 h-3.5" />
+            <span>Send</span>
+          </button>
+        </form>
 
-        {userRole === 'teacher' && (
-          <div className="bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-3 flex items-start gap-2.5 text-xs text-indigo-200">
-            <Sparkles className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <strong className="text-indigo-300">Pedagogical Recommendation:</strong> Multiple students struggle with the distinction between scaffolding and offloading. Consider asking a guiding question before reading the next section.
-            </div>
+        {/* Teacher Resolution action */}
+        {userRole === 'teacher' && onResolveConfusion && (
+          <div className="mt-4 pt-3 border-t border-[#2B231D] flex justify-end">
+            <button
+              onClick={() => {
+                onResolveConfusion(paragraph.id);
+                onClose();
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-900/30 hover:bg-emerald-800/40 border border-emerald-600/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition"
+            >
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span>Mark Clarified in Seminar</span>
+            </button>
           </div>
         )}
       </div>

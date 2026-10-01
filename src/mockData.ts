@@ -89,10 +89,20 @@ export const INITIAL_LESSONS: Lesson[] = [
             id: 'p3_1',
             pageNumber: 3,
             type: 'heading',
+            secondaryText: 'When a group reads a dense technical treatise',
             text: '1.3 Scaffolding vs. Offloading in Real-Time Text Synthesis',
             sectionNumber: '§ 1.3',
             confusionCount: 0,
             highlightCount: 3,
+            confusionNotes: [],
+          },
+          {
+            id: 'p3_sub',
+            pageNumber: 3,
+            type: 'body',
+            text: 'We partner with visions to navigate complexity and achieve transformative results.',
+            confusionCount: 0,
+            highlightCount: 0,
             confusionNotes: [],
           },
           {
@@ -101,7 +111,7 @@ export const INITIAL_LESSONS: Lesson[] = [
             type: 'body',
             text: 'When multiple readers annotate a dense technical treatise simultaneously, their individual perceptual attention is altered by the visible presence of peer highlights and marginalia. This phenomenon, termed "collective epistemic salienting," shapes comprehension trajectories before personal critical evaluation begins.',
             confusionCount: 1,
-            highlightCount: 8, // Yellow highlighted paragraph
+            highlightCount: 3,
             confusionNotes: [
               {
                 studentId: 'std_1',
@@ -126,7 +136,7 @@ export const INITIAL_LESSONS: Lesson[] = [
             pageNumber: 3,
             type: 'body',
             text: 'Crucially, we must demarcate the boundary between cognitive scaffolding (which elevates analytical capacity) and cognitive offloading (which delegates critical synthesis entirely to external algorithmic indexing). When a student pins an asterisk to indicate conceptual friction, they externalize their cognitive breakdown rather than disguising it behind passive comprehension cues.',
-            confusionCount: 4, // High confusion with red asterisks
+            confusionCount: 4,
             highlightCount: 2,
             confusionNotes: [
               {

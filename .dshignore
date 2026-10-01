@@ -1,0 +1,42 @@
+# .dshignore — skip unnecessary scanning for DSH agents
+# These patterns prevent the harness from reading build artifacts,
+# static assets, lockfiles, and other non-essential files on every turn.
+
+# Build artifacts & dependencies
+node_modules/
+.next/
+dist/
+build/
+.git/
+
+# Static assets & lockfiles
+public/
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.ico
+package-lock.json
+bun.lock
+pnpm-lock.yaml
+yarn.lock
+
+# Environment files
+.env*
+!.env.example
+
+# OS & editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# DSH session data
+.dsh/sessions/
+
+# GenUI generated artifact code (always re-built, never read)
+.dsh/genui/
+
+# Claude Code skill assets (WebP backgrounds, mockups — binaries, not code)
+~/.claude/skills/ui/assets/

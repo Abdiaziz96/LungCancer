@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, BookPlus, Sparkles } from 'lucide-react';
+import { X, BookPlus } from 'lucide-react';
 import { Lesson } from '../types';
 
 interface AddLessonModalProps {
@@ -64,14 +64,14 @@ export const AddLessonModal: React.FC<AddLessonModalProps> = ({
               id: `p_new_3`,
               pageNumber: 1,
               type: 'callout',
-              text: 'Discussion Goal: Identify the key structural assertions before the live seminar deconstruction.',
+              text: `Core Seminar Question: In what ways does social annotation alter individual hermeneutic reflection versus group consensus building?`,
               confusionCount: 0,
-              highlightCount: 0,
+              highlightCount: 2,
               confusionNotes: [],
-            }
-          ]
-        }
-      ]
+            },
+          ],
+        },
+      ],
     };
 
     onAddLesson(newLesson);
@@ -79,102 +79,104 @@ export const AddLessonModal: React.FC<AddLessonModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
       <div 
         id="add-lesson-modal"
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-slate-900 border border-slate-700/80 p-4 sm:p-6 shadow-2xl text-slate-100 relative"
+        className="w-full max-w-md rounded-2xl bg-[#191512] border border-[#2D2620] p-6 shadow-2xl text-[#E8DFD5] relative"
       >
         <button
           id="close-add-lesson-btn"
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-800"
-          aria-label="Close"
+          className="absolute top-4 right-4 text-[#8C8073] hover:text-white transition-colors p-1.5 rounded-lg hover:bg-[#251F1A]"
+          aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-10 h-10 rounded-xl bg-[#262019] border border-[#3E3226] flex items-center justify-center text-[#CCA572]">
             <BookPlus className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">Create New Reading Unit</h3>
-            <p className="text-xs text-slate-400">Add an interactive reading text to the curriculum</p>
+            <h3 className="text-base font-bold text-[#FAF6EE]">Add Reading Unit</h3>
+            <p className="text-xs text-[#8C8073]">Upload or configure a new document module</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Lesson Title</label>
+            <label className="block text-xs font-semibold text-[#8C8073] uppercase tracking-wider mb-1.5">
+              Unit Title
+            </label>
             <input
-              id="lesson-title-input"
+              id="new-lesson-title-input"
               type="text"
+              required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
-              className="w-full px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-              placeholder="e.g. Lesson 5: Epistemic Responsibility"
+              placeholder="e.g. Lesson 4: Epistemic Agency"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#120F0D] border border-[#2B231D] text-xs text-[#FAF6EE] focus:outline-none focus:border-[#CCA572] transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Subtitle or Focus Question</label>
+            <label className="block text-xs font-semibold text-[#8C8073] uppercase tracking-wider mb-1.5">
+              Subtitle or Topic
+            </label>
             <input
-              id="lesson-subtitle-input"
+              id="new-lesson-subtitle-input"
               type="text"
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
-              className="w-full px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-              placeholder="e.g. Investigating digital agency in seminar settings"
+              placeholder="e.g. Cognitive scaffolds in collective reading"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#120F0D] border border-[#2B231D] text-xs text-[#FAF6EE] focus:outline-none focus:border-[#CCA572] transition"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Discipline / Category</label>
-              <select
-                id="lesson-category-select"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition"
-              >
-                <option value="Cognitive Science">Cognitive Science</option>
-                <option value="Information Ethics">Information Ethics</option>
-                <option value="Pedagogical Theory">Pedagogical Theory</option>
-                <option value="Literary Analysis">Literary Analysis</option>
-                <option value="Computer Science">Computer Science</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Page Count</label>
+              <label className="block text-xs font-semibold text-[#8C8073] uppercase tracking-wider mb-1.5">
+                Total Pages
+              </label>
               <input
-                id="lesson-pages-input"
+                id="new-lesson-pages-input"
                 type="number"
                 min={1}
                 max={100}
                 value={totalPages}
-                onChange={(e) => setTotalPages(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition"
+                onChange={(e) => setTotalPages(Number(e.target.value))}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#120F0D] border border-[#2B231D] text-xs text-[#FAF6EE] focus:outline-none focus:border-[#CCA572] transition"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#8C8073] uppercase tracking-wider mb-1.5">
+                Curriculum Track
+              </label>
+              <input
+                id="new-lesson-category-input"
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="e.g. Theory"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#120F0D] border border-[#2B231D] text-xs text-[#FAF6EE] focus:outline-none focus:border-[#CCA572] transition"
               />
             </div>
           </div>
 
-          <div className="pt-2 flex items-center justify-end gap-3">
+          <div className="pt-3 border-t border-[#26201B] flex justify-end gap-2.5">
             <button
               type="button"
-              id="cancel-lesson-btn"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-[#8C8073] hover:text-white hover:bg-[#251F1A] transition"
             >
               Cancel
             </button>
             <button
+              id="confirm-create-lesson-btn"
               type="submit"
-              id="save-lesson-btn"
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition"
+              className="px-4 py-2 rounded-xl bg-[#CCA572] hover:bg-[#B89260] text-[#16120C] text-xs font-bold transition shadow-md"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              Add to Curriculum
+              Add Lesson Unit
             </button>
           </div>
         </form>
