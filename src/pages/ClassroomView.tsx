@@ -35,7 +35,7 @@ import {
   Highlighter 
 } from 'lucide-react';
 
-export default function App() {
+export function ClassroomView() {
   // 1. Role State: Teacher vs Student
   const [userRole, setUserRole] = useState<UserRole>('teacher');
 
